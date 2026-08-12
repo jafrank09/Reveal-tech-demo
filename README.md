@@ -275,6 +275,10 @@ Catching it adding bunk files that aren't actually needed either within the fram
 Trying to get it to understand my thinking on a test case after it misunderstood me several times (Needed to get much more specific, I good feedback/reminder for me)
 <img width="721" height="279" alt="Screenshot 2026-08-12 at 4 08 26 PM" src="https://github.com/user-attachments/assets/b8ff4b7b-92af-47c1-907b-416bf067427d" />
 
+Proof of a Successful test run via playwright report
+
+<img width="1418" height="750" alt="Screenshot 2026-08-12 at 4 35 44 PM" src="https://github.com/user-attachments/assets/5ec7cbe7-22c0-4f30-9e31-191ffd006507" />
+
 
 
 
