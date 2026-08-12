@@ -264,6 +264,8 @@ Purchase confirmation is different: it renders as a SweetAlert DOM modal, not a 
 - It introduced useless files in an attempt to provide a 'smoother' local testing experience. Neither of these achieved anything of note, and they were deleted and never committed. It wants to 'help' a little too much at times.
 
 - Screenshots of some prompts and interactions:
+
+
 Basic requirements I gave it for building out a small POM-oriented playwright framework
 - <img width="705" height="395" alt="Screenshot 2026-08-12 at 4 09 24 PM" src="https://github.com/user-attachments/assets/bc0d7758-1420-45d8-b8f9-e138cdbe335b" />
 
