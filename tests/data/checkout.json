@@ -1,0 +1,14 @@
+{
+  "product": {
+    "name": "Samsung galaxy s6",
+    "price": 360
+  },
+  "order": {
+    "name": "Jane Doe",
+    "country": "United States",
+    "city": "Austin",
+    "card": "4111111111111111",
+    "month": "6",
+    "year": "2027"
+  }
+}
