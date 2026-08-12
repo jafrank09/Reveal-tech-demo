@@ -4,7 +4,7 @@ A Playwright-based test automation project, built as a technical demo for an int
 
 ## Overview
 
-This repository showcases a TypeScript + [Playwright](https://playwright.dev/) test automation setup, including cross-browser test execution and CI integration via GitHub Actions.
+This repository is a QA engineering take-home submission covering manual test design, automation judgment, and a working Playwright + TypeScript automation suite against [demoblaze.com](https://www.demoblaze.com/), a public e-commerce demo site.
 
 ## Tech Stack
 
@@ -42,15 +42,34 @@ npx playwright test --headed
 npx playwright show-report
 ```
 
+On failure, a screenshot and a trace are captured automatically (see `playwright.config.ts`) and written to `test-results/<spec-name>-<test-title>-<browser>/`, e.g. `test-results/order-checkout-completes-a-full-order-checkout-chromium/`, containing `test-failed-1.png` and `trace.zip`. Open a trace with:
 
+```bash
+npx playwright show-trace test-results/<failed-test-folder>/trace.zip
+```
 
 ## Project Structure
 
 ```
 .
-├── tests/                  # Playwright test specs
-├── playwright.config.ts    # Playwright configuration (browsers, reporters, etc.)
-└── .github/workflows/      # CI pipeline definition
+├── tests/
+│   ├── pages/               # Page objects — selectors and actions, one class per page
+│   │   ├── HomePage.ts
+│   │   ├── ProductPage.ts
+│   │   └── CartPage.ts
+│   ├── fixtures/
+│   │   └── pages.fixture.ts # Single fixture file: wires page objects into every test
+│   ├── utils/
+│   │   └── dialogs.ts        # Shared helper: reused by ProductPage and HomePage
+│   ├── data/                 # Test data (JSON), imported by spec files — kept out of the specs themselves
+│   │   ├── checkout.json
+│   │   ├── contact.json
+│   │   └── categories.json
+│   ├── order-checkout.spec.ts
+│   ├── category-filter.spec.ts
+│   └── contact-request.spec.ts
+├── playwright.config.ts      # Playwright configuration (browsers, reporters, trace/screenshot capture)
+└── .github/workflows/        # CI pipeline definition
 ```
 
 
@@ -196,6 +215,44 @@ Parts of the HLZ feature we might NOT want to fully trust to automation:
 
 
 
+## Automated Test Suite (demoblaze.com)
+
+Three automated tests against [demoblaze.com](https://www.demoblaze.com/), built with a page object model.
+
+### Architecture
+
+- **Page objects** (`tests/pages/`) — one class per page (`HomePage`, `ProductPage`, `CartPage`). Selectors are private fields; the only public surface is a small set of action/getter methods. Specs never touch a selector directly.
+- **Single fixture file** (`tests/fixtures/pages.fixture.ts`) — extends Playwright's base `test` with `homePage`, `productPage`, and `cartPage` fixtures, so every spec just declares the page objects it needs as test arguments instead of constructing them.
+- **JSON data files** (`tests/data/`) — product names, prices, form values, and category expectations live in JSON, imported by whichever spec needs them. Selectors stay in the page objects; everything else lives in data.
+- **Shared utility** (`tests/utils/dialogs.ts`) — `ProductPage` and `HomePage` both need to handle a native browser dialog with the same non-obvious timing logic (see below), so that logic is a single exported function instead of being duplicated across both page objects.
+- **Assertions live in the specs**, not the page objects — page object methods perform actions and return values; `expect()` calls happen only in the `*.spec.ts` files.
+
+### Popup handling helper (`captureDialogMessage`)
+
+"Add to cart" and the Contact form confirm via native browser `alert()` dialogs instead of any DOM element or redirect. These two alerts fire on different timing (one blocks the page synchronously, the other only after a network call resolves), so a naive click-then-await-dialog sequence would deadlock on one and miss the other. `tests/utils/dialogs.ts`'s `captureDialogMessage()` handles both cases correctly and is shared by `ProductPage.addToCart()` and `HomePage.submitContactForm()`.
+
+Purchase confirmation is different: it renders as a SweetAlert DOM modal, not a native dialog, so it's asserted on like any other element.
+
+### The three tests
+
+1. **`order-checkout.spec.ts`** — full happy-path purchase: find a product, add it to the cart, verify the cart total, fill out and submit the order form, and confirm the purchase succeeds.
+2. **`category-filter.spec.ts`** — selecting a category (Laptops) narrows the product grid down to only that category's products.
+3. **`contact-request.spec.ts`** — the Contact form can be filled out and submitted successfully.
+
+## AI Usage
+
+**Tools used:** Claude Code, running inside Cursor.
+
+**Example prompts:**
+- The Part 3 kickoff prompt laying out the full framework spec: strict POM pattern, selectors/methods separated from scripts, a single fixture file injecting all page objects, JSON-only test data, assertions kept at the script level, comments justifying design choices, and the three target flows on demoblaze.com.
+- A correction mid-brainstorm for a manual test case: *"no thats wrong. I am thinking of a scenario in which there might be valid points outside the area of the chosen circle diameter. We do not want those to render, I assume"* — redirecting the AI after two wrong guesses at what the test case should actually verify.
+- *"we are missing something! we need a helper method"* — flagging that the automation deliverable's "reusable helper" requirement wasn't clearly satisfied yet.
+
+**What the AI got wrong:**
+- It misread the intent behind one HLZ test case three times in a row before landing on the right one (the "circle never partially renders" framing, then "full-diameter footprint" framing, both wrong — the actual ask was about a fully-valid viewport rendering exactly one circle). Caught and corrected each time through conversation.
+- It initially wrote near-identical native-dialog-handling logic in two separate page objects instead of extracting it into a shared helper — technically working, but missing the assignment's explicit "reusable helper/utility" requirement and duplicating non-obvious timing logic. Caught the gap and had it extracted into `tests/utils/dialogs.ts`.
+- Separately (not user-caught in the moment, but worth being honest about): its first fix for a dialog-handling deadlock introduced a different bug that broke the "Add to cart" flow — only caught by re-running the full suite before reporting the fix as done.
+
 ## Status
 
-Initial scaffold — additional test coverage and application-specific scenarios to follow.
+Parts 1 through 4 are complete.
