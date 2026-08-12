@@ -148,6 +148,14 @@ Manual test design for the HLZ (Helicopter Landing Zone) feature.
 - The deliberate tap in step 3 places an HLZ circle exactly at the tapped location, sized to the current diameter
 - No stray or duplicate HLZ markers are created as a side effect of panning/scrolling
 
+## Clarifying Questions (HLZ Feature)
+
+1. **Default diameter on open** — does the slider start at 20m, 200m, or some other system default value when the HLZ tool is first activated? Is that default value hard coded, or should we have a config that an Admin could change on the fly if needed?
+2. **Manual placement constraint enforcement** — does manually placing an HLZ on unsuitable terrain (water, steep slope) create a blocked/warning pop up of some kind the user can see? Or is manual override the whole point of that path?
+3. **Placement finality** — is a single tap or click FINAL? Or is there a confirm/undo step? Extremely relevant, given the high cost and risk of a mis-placed HLZ in the field.
+4. **Behavior with many valid candidates** — is "first candidate found" the intended long-term behavior, or is ranking/filtering multiple valid locations on the roadmap? If so, are those ranking/filtering features hard-coded, or configurable by an admin?
+5. **Cross-platform consistency** — for an identical viewport/input, how precisely should we expect HLZ selections to match across Mac, Windows, Android, and Cloud? Is there an acceptable margin of error, in terms of distance, or should the result be identical every time?
+
 ## Status
 
 Initial scaffold — additional test coverage and application-specific scenarios to follow.
