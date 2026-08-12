@@ -59,7 +59,7 @@ Tests run automatically on every push and pull request to `main`/`master` via th
 
 Manual test design for the HLZ (Helicopter Landing Zone) feature.
 
-### TC-01: Search successfully places landing zone at default diameter
+### TC-01: Search successfully places HLZ at default diameter
 
 **Preconditions:**
 - User is logged into Farsight with a valid session
@@ -76,6 +76,42 @@ Manual test design for the HLZ (Helicopter Landing Zone) feature.
 - The first suitable candidate identified is selected and rendered as a circular HLZ marker on the map, with diameter matching the slider value
 - No error state or "No suitable location" message is shown
 - HLZ marker is selectable/editable after placement
+
+### TC-02: Search returns "No suitable location" over unsuitable HLZ terrain
+
+**Preconditions:**
+- User is logged into Farsight with a valid session
+- A mission/map is open and loaded, with the current viewport containing only unsuitable terrain for an HLZ (e.g., entirely over ocean, mountainous/steep terrain, or other constraint-violating area)
+- HLZ toolbar button is visible and enabled
+
+**Steps:**
+1. Click the **HLZ** toolbar button
+2. Leave the diameter slider at its default value (or set to any valid value within 20–200m)
+3. Click **Search**
+
+**Expected Result:**
+- System evaluates candidates within the current viewport and finds none that meet the constraints
+- A "No suitable location" message is displayed to the user
+- No HLZ marker is rendered on the map
+- The user is not left in a broken/stuck state — they can adjust the viewport (pan/zoom) or diameter and retry Search
+
+### TC-03: Manually placement HLZ
+
+**Preconditions:**
+- User is logged into Farsight with a valid session
+- A mission/map is open and loaded
+- HLZ toolbar button is visible and enabled
+
+**Steps:**
+1. Click the **HLZ** toolbar button
+2. Set the diameter slider to a specific value (e.g., 100m)
+3. Instead of clicking Search, click directly on a valid location on the map (clear terrain, no obstructions)
+
+**Expected Result:**
+- An HLZ circle is rendered centered on the selected point
+- The circle's diameter matches the slider value (100m)
+- The HLZ marker is selectable/editable after placement
+- No "No suitable location" message appears, since this is a manual — not searched — placement
 
 ## Status
 
