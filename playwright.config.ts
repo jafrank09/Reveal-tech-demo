@@ -13,6 +13,9 @@ import { defineConfig, devices } from '@playwright/test';
  */
 export default defineConfig({
   testDir: './tests',
+  /* Where per-test artifacts (screenshots, traces) are written on failure. Made explicit
+     here rather than left as Playwright's implicit default, so it's easy to find. */
+  outputDir: './test-results',
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
@@ -25,11 +28,13 @@ export default defineConfig({
   reporter: 'html',
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
-    /* Base URL to use in actions like `await page.goto('')`. */
-    // baseURL: 'http://localhost:3000',
+    /* Base URL so tests can navigate with relative paths, e.g. page.goto('/cart.html'). */
+    baseURL: 'https://www.demoblaze.com',
 
-    /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    trace: 'on-first-retry',
+    /* Capture a trace and a screenshot on failure, regardless of whether a retry happens
+       (CI retries; a local run with retries: 0 would otherwise capture neither). */
+    trace: 'retain-on-failure',
+    screenshot: 'only-on-failure',
   },
 
   /* Configure projects for major browsers */
