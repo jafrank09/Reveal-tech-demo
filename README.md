@@ -113,6 +113,24 @@ Manual test design for the HLZ (Helicopter Landing Zone) feature.
 - The HLZ marker is selectable/editable after placement
 - No "No suitable location" message appears, since this is a manual — not searched — placement
 
+### TC-04: With an entirely valid viewport, Search renders exactly one HLZ circle
+
+**Preconditions:**
+- User is logged into Farsight with a valid session
+- A mission/map is open and loaded, where the entire visible viewport is suitable terrain (no obstructions, water, or slope anywhere — every point is a technically valid candidate)
+- Diameter slider is at its default value (20m)
+- HLZ toolbar button is visible and enabled
+
+**Steps:**
+1. Click the **HLZ** toolbar button
+2. Confirm the diameter slider is at its default (20m)
+3. Click **Search**
+
+**Expected Result:**
+- Exactly one HLZ circle is rendered on the map
+- No other candidate markers, highlighted zones, or additional circles appear anywhere else in the viewport
+- The single rendered circle matches the 20m diameter
+
 ## Status
 
 Initial scaffold — additional test coverage and application-specific scenarios to follow.
