@@ -156,6 +156,12 @@ Manual test design for the HLZ (Helicopter Landing Zone) feature.
 4. **Behavior with many valid candidates** — is "first candidate found" the intended long-term behavior, or is ranking/filtering multiple valid locations on the roadmap? If so, are those ranking/filtering features hard-coded, or configurable by an admin?
 5. **Cross-platform consistency** — for an identical viewport/input, how precisely should we expect HLZ selections to match across Mac, Windows, Android, and Cloud? Is there an acceptable margin of error, in terms of distance, or should the result be identical every time?
 
+## Automation Judgment (HLZ Feature)
+
+Parts of the HLZ feature we would not fully automate:
+
+1. **Verifying no HLZ is selected when all viewport terrain is ineligible.** We would automate the UI-level regression test (TC-02), but not rely solely on automation for verifying the negative case is correct against real-world terrain — because the consequence of a false negative here (an HLZ shown as safe when it isn't) is severe enough to warrant a human sanity-check against live data, not just pre-defined fixture data, which could change as a result of some upstream service.
+
 ## Status
 
 Initial scaffold — additional test coverage and application-specific scenarios to follow.
