@@ -26,6 +26,8 @@ npm install
 npx playwright install --with-deps
 ```
 
+
+
 ### Running Tests
 
 ```bash
@@ -47,6 +49,8 @@ On failure, a screenshot and a trace are captured automatically (see `playwright
 ```bash
 npx playwright show-trace test-results/<failed-test-folder>/trace.zip
 ```
+
+
 
 ## Project Structure
 
@@ -215,7 +219,7 @@ Parts of the HLZ feature we might NOT want to fully trust to automation:
 
 
 
-## Automated Test Suite (demoblaze.com)
+## Automated Test Suite ([demoblaze.com](http://demoblaze.com))
 
 Three automated tests against [demoblaze.com](https://www.demoblaze.com/), built with a page object model.
 
@@ -227,6 +231,8 @@ Three automated tests against [demoblaze.com](https://www.demoblaze.com/), built
 - **Shared utility** (`tests/utils/dialogs.ts`) — `ProductPage` and `HomePage` both need to handle a native browser dialog with the same non-obvious timing logic (see below), so that logic is a single exported function instead of being duplicated across both page objects.
 - **Assertions live in the specs**, not the page objects — page object methods perform actions and return values; `expect()` calls happen only in the `*.spec.ts` files.
 
+
+
 ### Popup handling helper (`captureDialogMessage`)
 
 "Add to cart" and the Contact form confirm via native browser `alert()` dialogs instead of any DOM element or redirect. These two alerts fire on different timing (one blocks the page synchronously, the other only after a network call resolves), so a naive click-then-await-dialog sequence would deadlock on one and miss the other. `tests/utils/dialogs.ts`'s `captureDialogMessage()` handles both cases correctly and is shared by `ProductPage.addToCart()` and `HomePage.submitContactForm()`.
@@ -235,24 +241,25 @@ Purchase confirmation is different: it renders as a SweetAlert DOM modal, not a 
 
 ### The three tests
 
-1. **`order-checkout.spec.ts`** — full happy-path purchase: find a product, add it to the cart, verify the cart total, fill out and submit the order form, and confirm the purchase succeeds.
-2. **`category-filter.spec.ts`** — selecting a category (Laptops) narrows the product grid down to only that category's products.
-3. **`contact-request.spec.ts`** — the Contact form can be filled out and submitted successfully.
+1. `order-checkout.spec.ts` — full happy-path purchase: find a product, add it to the cart, verify the cart total, fill out and submit the order form, and confirm the purchase succeeds.
+2. `category-filter.spec.ts` — selecting a category (Laptops) narrows the product grid down to only that category's products.
+3. `contact-request.spec.ts` — the Contact form can be filled out and submitted successfully.
+
+
 
 ## AI Usage
 
 **Tools used:** Claude Code, running inside Cursor.
 
 **Example prompts:**
+
 - The Part 3 kickoff prompt laying out the full framework spec: strict POM pattern, selectors/methods separated from scripts, a single fixture file injecting all page objects, JSON-only test data, assertions kept at the script level, comments justifying design choices, and the three target flows on demoblaze.com.
 - A correction mid-brainstorm for a manual test case: *"no thats wrong. I am thinking of a scenario in which there might be valid points outside the area of the chosen circle diameter. We do not want those to render, I assume"* — redirecting the AI after two wrong guesses at what the test case should actually verify.
-- *"we are missing something! we need a helper method"* — flagging that the automation deliverable's "reusable helper" requirement wasn't clearly satisfied yet.
+- *"wait why are we repeating that dialogue-handling logic?"* — it failed to recognize that as an opprotunity to develope a helper funtion, even after explicitly being told to be on the lookout for re-usable code.
 
 **What the AI got wrong:**
-- It misread the intent behind one HLZ test case three times in a row before landing on the right one (the "circle never partially renders" framing, then "full-diameter footprint" framing, both wrong — the actual ask was about a fully-valid viewport rendering exactly one circle). Caught and corrected each time through conversation.
-- It initially wrote near-identical native-dialog-handling logic in two separate page objects instead of extracting it into a shared helper — technically working, but missing the assignment's explicit "reusable helper/utility" requirement and duplicating non-obvious timing logic. Caught the gap and had it extracted into `tests/utils/dialogs.ts`.
-- Separately (not user-caught in the moment, but worth being honest about): its first fix for a dialog-handling deadlock introduced a different bug that broke the "Add to cart" flow — only caught by re-running the full suite before reporting the fix as done.
 
-## Status
+- It misread the intent behind one HLZ test case three times when I asked it to edit the language in a row, before understanding my meaning The actual ask was about a fully-valid viewport rendering exactly **one** circle). I had to catch and correct that each time through conversation.
+- It failed to be sufficiently DRY when initially writing logic in 2 different page objecty files for nearly identical native dialog handling logic, instead of extracting it into a shared helper. It still technically worked, but that's an obvious opprotunity for not repeating oneself in code. (see helper in`tests/utils/dialogs.ts`.)
+- It introduced useless files in an attempt to provide a 'smoother' local testing experience. Neither of these achieved anything of note, and they were deleted and never committed. It wants to 'help' a little too much at times.
 
-Parts 1 through 4 are complete.
