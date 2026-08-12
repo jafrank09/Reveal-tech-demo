@@ -55,6 +55,28 @@ npx playwright show-report
 
 Tests run automatically on every push and pull request to `main`/`master` via the workflow defined in [.github/workflows/playwright.yml](.github/workflows/playwright.yml). Test reports are uploaded as build artifacts for review.
 
+## Manual Test Cases (HLZ Feature)
+
+Manual test design for the HLZ (Helicopter Landing Zone) feature.
+
+### TC-01: Search successfully places landing zone at default diameter
+
+**Preconditions:**
+- User is logged into Farsight with a valid session
+- A mission/map is open and loaded AND centered on a viewport containing at least one location that satisfies HLZ constraints (clear terrain, no obstructions, etc.)
+- HLZ toolbar button is visible AND enabled
+
+**Steps:**
+1. Click the **HLZ** toolbar button
+2. Observe the diameter slider appears, defaulted to a known value (e.g., 20m, or whatever the required default is)
+3. Click **Search**
+
+**Expected Result:**
+- System evaluates candidates within the current viewport
+- The first suitable candidate identified is selected and rendered as a circular HLZ marker on the map, with diameter matching the slider value
+- No error state or "No suitable location" message is shown
+- HLZ marker is selectable/editable after placement
+
 ## Status
 
 Initial scaffold — additional test coverage and application-specific scenarios to follow.
