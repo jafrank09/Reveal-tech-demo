@@ -1,11 +1,17 @@
 import { Page, Locator } from '@playwright/test';
+import { captureDialogMessage } from '../utils/dialogs';
 
 /**
  * Models demoblaze.com's home page (index.html): category navigation, the product
- * grid, and the "Contact" modal (present in the nav on every page, but only ever
- * exercised from here in this suite). Keeping selectors as class fields means a
- * markup change only requires updating this one file, not every spec that touches
- * the home page.
+ * grid, and the "Contact" modal. Keeping selectors as class fields means a markup
+ * change only requires updating this one file, not every spec that touches the home
+ * page.
+ *
+ * Note: the Contact modal is technically a separate concern from the home page — it's
+ * actually present in the nav on every page (prod.html, cart.html), not just this one.
+ * A larger suite would likely pull it into its own ContactModal component page object
+ * shared across pages. It's kept here instead because this suite only ever exercises
+ * it from the home page, and splitting it out wouldn't pay for itself at this scope.
  */
 export class HomePage {
   private readonly page: Page;
@@ -78,30 +84,16 @@ export class HomePage {
   /**
    * Fills and submits the Contact form. The site confirms submission with a native
    * browser `alert()` rather than any in-page element — there's nothing to assert
-   * against in the DOM, so the dialog's message is captured and returned instead.
-   *
-   * This alert fires synchronously, blocking the page's JS thread the instant it
-   * opens — which means the click() that triggers it won't resolve until the dialog
-   * is dismissed. Awaiting the click and the dialog together via Promise.all avoids a
-   * deadlock here: page.once fires independent of click()'s own pending await, unlike
-   * sequentially awaiting a waitForEvent('dialog') promise after the click, which
-   * would never get the chance to call dialog.accept().
+   * against in the DOM, so the dialog's message is captured (via the shared
+   * captureDialogMessage helper — see tests/utils/dialogs.ts for why a plain
+   * click-then-await-dialog sequence isn't safe here) and returned instead.
    */
   async submitContactForm(email: string, name: string, message: string): Promise<string> {
     await this.contactEmailInput.fill(email);
     await this.contactNameInput.fill(name);
     await this.contactMessageInput.fill(message);
 
-    let confirmationMessage = '';
-    const dialogHandled = new Promise<void>((resolve) => {
-      this.page.once('dialog', async (dialog) => {
-        confirmationMessage = dialog.message();
-        await dialog.accept();
-        resolve();
-      });
-    });
-    await Promise.all([dialogHandled, this.sendMessageButton.click()]);
-    return confirmationMessage;
+    return captureDialogMessage(this.page, () => this.sendMessageButton.click());
   }
 
   async goToCart() {
