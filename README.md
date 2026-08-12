@@ -131,6 +131,23 @@ Manual test design for the HLZ (Helicopter Landing Zone) feature.
 - No other candidate markers, highlighted zones, or additional circles appear anywhere else in the viewport
 - The single rendered circle matches the 20m diameter
 
+### TC-05: Android — a pan/scroll gesture never triggers accidental HLZ placement
+
+**Preconditions:**
+- User is logged into Farsight on an Android device/tablet with a valid session
+- Map is loaded and visible, containing valid terrain
+- HLZ toolbar button is visible and enabled, diameter slider set to a valid value
+
+**Steps:**
+1. Tap the **HLZ** toolbar button
+2. Perform a touch-drag (pan) gesture across the map to reposition the view — touching down on the map, dragging, then lifting
+3. After panning, perform a single, deliberate tap on a valid, stationary location on the map
+
+**Expected Result:**
+- The pan gesture in step 2 does not place an HLZ, even though it involves a touch-down and touch-up on the map surface
+- The deliberate tap in step 3 places an HLZ circle exactly at the tapped location, sized to the current diameter
+- No stray or duplicate HLZ markers are created as a side effect of panning/scrolling
+
 ## Status
 
 Initial scaffold — additional test coverage and application-specific scenarios to follow.
