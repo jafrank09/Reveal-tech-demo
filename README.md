@@ -86,7 +86,7 @@ Tests run automatically on every push and pull request to `main`/`master` via th
 
 Manual test design for the HLZ (Helicopter Landing Zone) feature.
 
-### TC-01: As a mission operator, I want to run a Search and have an HLZ placed at the default diameter, so that I can quickly get a viable landing zone without manual configuration
+### TC-01: As a mission operator, I want to run a Search and have an HLZ placed at the default diameter, so that I can quickly get a viable landing zone without manual configuration.
 
 **Preconditions:**
 
@@ -103,18 +103,18 @@ Manual test design for the HLZ (Helicopter Landing Zone) feature.
 **Expected Result:**
 
 - System evaluates candidates within the current viewport
-- The first suitable candidate identified is selected and rendered as a circular HLZ marker on the map, with diameter matching the slider value
+- The first suitable candidate identified is selected and rendered as an HLZ marker on the map
 - No error state or "No suitable location" message is shown
-- HLZ marker is selectable/editable after placement
+- HLZ marker is selectable/editable after placement (I am making an assumption that this is possible)
 
 
 
-### TC-02: As a mission operator, I want to be shown a "No suitable location" message when my viewport has no valid HLZ candidates, so that I don't mistake an empty result for a system failure and know I need to adjust my viewport or diameter
+### TC-02: As a mission operator, I want to be shown a "No suitable location" message when my viewport contains only unsuitable terrain, so that I can't place an HLZ marker in an invalid area.
 
 **Preconditions:**
 
 - User is logged into Farsight with a valid session
-- A mission/map is open and loaded, with the current viewport containing only unsuitable terrain for an HLZ (e.g., entirely over ocean, mountainous/steep terrain, or other constraint-violating area)
+- A mission/map is open and loaded, with the current viewport containing only unsuitable terrain for an HLZ (e.g., entirely over an ocean, mountainous/steep terrain, or other constraint-violating area)
 - HLZ toolbar button is visible and enabled
 
 **Steps:**
@@ -125,14 +125,14 @@ Manual test design for the HLZ (Helicopter Landing Zone) feature.
 
 **Expected Result:**
 
-- System evaluates candidates within the current viewport and finds none that meet the constraints
-- A "No suitable location" message is displayed to the user
+- System evaluates candidates within the current viewport and finds NONE that meet the constraints
+- A "No suitable location" message is displayed to the user.
 - No HLZ marker is rendered on the map
-- The user is not left in a broken/stuck state — they can adjust the viewport (pan/zoom) or diameter and retry Search
+- The user is not left in a broken/stuck state. They can adjust the viewport (pan/zoom) or diameter and retry Search
 
 
 
-### TC-03: As a mission operator, I want to manually place an HLZ at a location and diameter of my choosing, so that I can designate a landing zone based on my own judgment instead of relying on Search
+### TC-03: As a mission operator, I want to manually place an HLZ marker at a location and diameter of my choosing, so that I can designate a landing zone based on my own judgment, instead of relying on Search.
 
 **Preconditions:**
 
@@ -144,14 +144,14 @@ Manual test design for the HLZ (Helicopter Landing Zone) feature.
 
 1. Click the **HLZ** toolbar button
 2. Set the diameter slider to a specific value (e.g., 100m)
-3. Instead of clicking Search, click directly on a valid location on the map (clear terrain, no obstructions)
+3. Instead of clicking Search, click/tap directly on a valid location on the map (clear terrain, no obstructions)
 
 **Expected Result:**
 
-- An HLZ circle is rendered centered on the selected point
-- The circle's diameter matches the slider value (100m)
-- The HLZ marker is selectable/editable after placement
-- No "No suitable location" message appears, since this is a manual, NOT searched  placement
+- An HLZ marker is rendered centered on the selected point
+- The marker is within the acceptable diameter 
+- The HLZ marker is selectable/editable after placement (I am making an assumption that this is possible)
+- No "No suitable location" message appears, since this is a manual, NOT searched placement
 
 
 
@@ -171,16 +171,15 @@ Manual test design for the HLZ (Helicopter Landing Zone) feature.
 
 **Expected Result:**
 
-- ⚠️ The expected behavior is currently undefined — this 'test' exists to check actual system behavior, not to assert a known outcome. Verify which of the following actually happens, then flag it against product requirement 
+- ⚠️ The expected behavior is currently undefined. This 'test' exists to check actual system behavior, not to assert a known outcome. Verify which of the following actually happens, then flag it against product requirement: 
 
-(some Clarifying Questions I want answered):
-
-  - Does the system evaluate some buffer/margin of terrain just beyond the visible edge so edge-adjacent candidates can still be validated? **or**
+  - Does the system evaluate some buffer/margin of terrain just beyond the visible edge so edge-adjacent candidates can still be validated?
+  - **or**
   - Is terrain beyond the edge treated as unknown/invalid by default? Effectively shrinking the usable search area, and making a genuinely valid, larger landing zone go undetected, simply because it straddles the edge of the current view?
 
 
 
-### TC-05: As a mission operator on Android, I want panning/scrolling the map to never place an HLZ by accident, so that I don't create an unintended landing zone just from navigating the map
+### TC-05: As a mission operator on Android, I want panning/scrolling on the map to never place an HLZ by accident, so that I don't create an unintended landing zone just from navigating the map.
 
 **Preconditions:**
 
@@ -191,7 +190,7 @@ Manual test design for the HLZ (Helicopter Landing Zone) feature.
 **Steps:**
 
 1. Tap the **HLZ** toolbar button
-2. Perform a touch-drag (pan) gesture across the map to reposition the view — touching down on the map, dragging, then lifting
+2. Perform a touch-drag (pan) gesture across the map to reposition the view: touching down on the map, dragging, then lifting
 3. After panning, perform a single, deliberate tap on a valid, stationary location on the map
 
 **Expected Result:**
@@ -204,9 +203,9 @@ Manual test design for the HLZ (Helicopter Landing Zone) feature.
 
 ## Clarifying Questions (HLZ Feature)
 
-1. **Default diameter on open** — does the slider start at 20m, 200m, or some other system default value when the HLZ tool is first activated? Is that default value hard coded, or should we have a config that an Admin could change on the fly, if needed?
+1. **Default diameter on open** — does the slider start at 20m, 200m, or some other system default value when the HLZ tool is first activated? Is that default value hard-coded, or should we have a config that an Admin can change on the fly, if needed?
 2. **Manual placement constraint enforcement** — does manually placing an HLZ on unsuitable terrain (water, steep slope) create a blocked/warning pop up of some kind the user can see? Or is manual override the whole point of that path?
-3. **Placement finality** — is a single tap or click FINAL? Or is there a confirm/undo step? Extremely relevant, given the high cost and risk of a mis-placed HLZ in the field.
+3. **Placement finality** — is a single tap or click FINAL? Or is there a confirm/undo step? Extremely relevant, given the high cost and risk of calling in a helicopter to a potentially dangerous combat zone.
 4. **Behavior with many valid candidates** — is "first candidate found" the intended long-term behavior? Or is ranking/filtering multiple valid locations on the roadmap? If so, are those ranking/filtering features hard-coded, or configurable by an admin?
 5. **Cross-platform consistency** — for an identical viewport/input, how precisely should we expect HLZ selections to match across Mac, Windows, Android, and Cloud? Is there an acceptable margin of error, in terms of distance, or should the result be identical every time?
 
@@ -216,8 +215,8 @@ Manual test design for the HLZ (Helicopter Landing Zone) feature.
 
 Parts of the HLZ feature we might NOT want to fully trust to automation:
 
-1. **Verifying no HLZ is selected when all viewport terrain is ineligible.** We would automate the UI-level regression test (TC-02), but not rely solely on automation for verifying the negative case is correct against real-world terrain:  the consequence of a false negative here (an HLZ shown as safe when it isn't) is severe enough to warrant a human sanity-check against live data, not just pre-defined fixture data, which could change as a result of some upstream service.
-2. **Final confirmation to transmit the HLZ to an inbound helicopter.** We would automate assertions around this action: i.e. button state, enabled/disabled conditions, and that the correct payload is sent. But, we would not rely on automation alone to certify that this action works end-to-end in a live or production-like environment. A scripted click passing in a test environment proves the UI behaved correctly; it **doesn't** prove a helicopter crew actually receives a correct, timely signal. My assumption is that this action might put an aircrew and military transport into a potentially hostile zone, which instantlly entails much greater risk and complexity, even if its pre-planned. We'd want a human to manually verify the full signal path, **especially** after any change to how that code/data path might work. The cost of automation giving false confidence here isn't a failed test, it's a life-safety failure in the field.
+1. **Verifying no HLZ is selected when all viewport terrain is ineligible.** We would automate the UI-level regression test (TC-02), but not rely solely on automation for verifying the negative case is correct against real-world terrain:  the consequence of a false negative here (an HLZ shown as safe when it isn't) is severe enough to warrant a human sanity-check against live data, not just pre-defined fixture data.
+2. **Final confirmation to transmit the HLZ to an inbound helicopter.** We would automate assertions around this action: i.e. button state, enabled/disabled conditions, and that the correct payload is sent. But, we would NOT rely on automation alone to certify that this action works end-to-end in a live or production-like environment. A scripted click passing in a test environment proves the UI behaved correctly; it **doesn't** prove a helicopter crew actually receives a correct, timely signal. My assumption is that this action might put an aircrew and military transport into a potentially hostile zone, which instantly entails much greater risk and complexity, even if there is a contingency plan for that outcome. We'd want a human to manually verify the full signal path, **especially** after any change to how that code/data path might work. The cost of automation giving false confidence here isn't a failed test, it's a failure in the field that could potentially endanger additional lives.
 
 
 
@@ -255,15 +254,15 @@ Purchase confirmation is different: it renders as a SweetAlert DOM modal, not a 
 
 **Example prompts:**
 
-- The Part 3 kickoff prompt laying out the full framework spec: strict POM pattern, selectors/methods separated from scripts, a single fixture file injecting all page objects, JSON-only test data, assertions kept at the script level, comments justifying design choices, and the three target flows on demoblaze.com.
+- The Part 3 kickoff prompt laying out the full framework spec (see screenshot below): strict POM pattern, selectors/methods separated from scripts, a single fixture file injecting all page objects, JSON-only test data, assertions kept at the script level, comments justifying design choices, and the three target flows on demoblaze.com.
 - A correction mid-brainstorm for a manual test case: *"no thats wrong. I am thinking of a scenario in which there might be valid points outside the area of the chosen circle diameter. We do not want those to render, I assume"* — redirecting the AI after two wrong guesses at what the test case should actually verify.
-- *"wait why are we repeating that dialogue-handling logic?"* — it failed to recognize that as an opprotunity to develope a helper funtion, even after explicitly being told to be on the lookout for re-usable code.
+- *"wait why are we repeating that dialogue-handling logic?"* — it failed to recognize that as an opportunity to develop a helper function, even after explicitly being told to be on the lookout for re-usable code.
 
 **What the AI got wrong:**
 
 - It misread the intent behind one HLZ test case three times when I asked it to edit the language in a row, before understanding my meaning The actual ask was about a fully-valid viewport rendering exactly **one** circle). I had to catch and correct that each time through conversation.
-- It failed to be sufficiently DRY when initially writing logic in 2 different page objecty files for nearly identical native dialog handling logic, instead of extracting it into a shared helper. It still technically worked, but that's an obvious opprotunity for not repeating oneself in code. (see helper in`tests/utils/dialogs.ts`.)
-- It introduced useless files in an attempt to provide a 'smoother' local testing experience. Neither of these achieved anything of note, and they were deleted and never committed. It wants to 'help' a little too much at times.
+- It failed to be sufficiently DRY when initially writing logic in 2 different page objecty files for nearly identical native dialog handling logic, instead of extracting it into a shared helper. It still technically worked, but that's an obvious opportunity for not repeating oneself in code. (see helper in`tests/utils/dialogs.ts`.)
+- It introduced useless files in an attempt to provide a 'smoother' local testing experience (managing linter issues, etc). Neither of these achieved anything of note, and they were deleted and never committed. It wants to 'help' a little too much at times.
 
 - Screenshots of some prompts and interactions:
 
@@ -276,6 +275,10 @@ Catching it adding bunk files that aren't actually needed either within the fram
 
 Trying to get it to understand my thinking on a test case after it misunderstood me several times (Needed to get much more specific, I good feedback/reminder for me)
 <img width="721" height="279" alt="Screenshot 2026-08-12 at 4 08 26 PM" src="https://github.com/user-attachments/assets/b8ff4b7b-92af-47c1-907b-416bf067427d" />
+
+Proof of a Successful test run via playwright report
+
+<img width="1418" height="750" alt="Screenshot 2026-08-12 at 4 35 44 PM" src="https://github.com/user-attachments/assets/5ec7cbe7-22c0-4f30-9e31-191ffd006507" />
 
 
 
