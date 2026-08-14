@@ -14,6 +14,10 @@ test('filters products by category', async ({ homePage }) => {
 
   const visibleTitles = await homePage.getVisibleProductTitles();
 
+  // Note: asserting each title against a static JSON allowlist is reallt too broad of a 
+  // check against data that this suite doesn't control (the live catalog). Assertioons should  a
+  // ideally be precise and ingle-purpose as possible. I have opted to keep this one as-is for the sake of brevity
+  // but I want to call out that this could easily source of flakiness/test debt, if and when demoblaze's catalog changes.
   expect(visibleTitles.length).toBeGreaterThan(0);
   for (const title of visibleTitles) {
     expect(categories.laptops.expectedProducts).toContain(title);
