@@ -6,6 +6,8 @@ import checkoutData from './data/checkout.json';
  * fill out the order form, and confirm the purchase succeeds. Assertions live here
  * rather than inside the page objects, so the page objects stay reusable by any
  * future test that wants the same actions without the same expectations.
+ * We should eventually put these assertion strings into a shared json data file, similar to our
+ * categories.json file, to avoid duplication. For the sake of brevity, I have opted to leave them here.
  */
 test('completes a full order checkout', async ({ homePage, productPage, cartPage }) => {
   await homePage.goto();
