@@ -86,7 +86,7 @@ Tests run automatically on every push and pull request to `main`/`master` via th
 
 Manual test design for the HLZ (Helicopter Landing Zone) feature.
 
-### TC-01: Search successfully places HLZ at default diameter
+### TC-01: As a mission operator, I want to run a Search and have an HLZ placed at the default diameter, so that I can quickly get a viable landing zone without manual configuration
 
 **Preconditions:**
 
@@ -109,7 +109,7 @@ Manual test design for the HLZ (Helicopter Landing Zone) feature.
 
 
 
-### TC-02: Search returns "No suitable location" over unsuitable HLZ terrain
+### TC-02: As a mission operator, I want to be shown a "No suitable location" message when my viewport has no valid HLZ candidates, so that I don't mistake an empty result for a system failure and know I need to adjust my viewport or diameter
 
 **Preconditions:**
 
@@ -132,7 +132,7 @@ Manual test design for the HLZ (Helicopter Landing Zone) feature.
 
 
 
-### TC-03: Manually placement HLZ
+### TC-03: As a mission operator, I want to manually place an HLZ at a location and diameter of my choosing, so that I can designate a landing zone based on my own judgment instead of relying on Search
 
 **Preconditions:**
 
@@ -155,30 +155,32 @@ Manual test design for the HLZ (Helicopter Landing Zone) feature.
 
 
 
-### TC-04: With an entirely valid viewport, Search renders exactly one HLZ circle
-
+### TC-04: As a mission operator, I want to know how the system handles a valid terrain candidate that sits at the edge of the current search area, so that a rendered HLZ is never based on ground that isn't in scope for evaluation.
 **Preconditions:**
 
 - User is logged into Farsight with a valid session
-- A mission/map is open and loaded, where the entire visible viewport is suitable terrain (no obstructions, water, or slope anywhere, i.e. every point is a technically valid candidate)
-- Diameter slider is at its default value (20m)
+- A mission/map is open and loaded, panned/zoomed so that a patch of otherwise-suitable terrain sits at or right against the edge of the current search area
 - HLZ toolbar button is visible and enabled
+- Diameter slider is set to a value large enough that this edge-of-viewport scenario is possible
 
 **Steps:**
 
 1. Click the **HLZ** toolbar button
-2. Confirm the diameter slider is at its default (20m)
+2. Pan/zoom so a patch of valid terrain sits at or near the edge of the visible search area
 3. Click **Search**
 
 **Expected Result:**
 
-- Exactly one HLZ circle is rendered on the map
-- No other candidate markers, highlighted zones, or additional circles appear anywhere else in the viewport
-- The single rendered circle matches the 20m diameter
+- ⚠️ The expected behavior is currently undefined — this 'test' exists to check actual system behavior, not to assert a known outcome. Verify which of the following actually happens, then flag it against product requirement 
+
+(some Clarifying Questions I want answered):
+
+  - Does the system evaluate some buffer/margin of terrain just beyond the visible edge so edge-adjacent candidates can still be validated? **or**
+  - Is terrain beyond the edge treated as unknown/invalid by default? Effectively shrinking the usable search area, and making a genuinely valid, larger landing zone go undetected, simply because it straddles the edge of the current view?
 
 
 
-### TC-05: Android — a pan/scroll gesture never triggers accidental HLZ placement
+### TC-05: As a mission operator on Android, I want panning/scrolling the map to never place an HLZ by accident, so that I don't create an unintended landing zone just from navigating the map
 
 **Preconditions:**
 
@@ -202,10 +204,10 @@ Manual test design for the HLZ (Helicopter Landing Zone) feature.
 
 ## Clarifying Questions (HLZ Feature)
 
-1. **Default diameter on open** — does the slider start at 20m, 200m, or some other system default value when the HLZ tool is first activated? Is that default value hard coded, or should we have a config that an Admin could change on the fly if needed?
+1. **Default diameter on open** — does the slider start at 20m, 200m, or some other system default value when the HLZ tool is first activated? Is that default value hard coded, or should we have a config that an Admin could change on the fly, if needed?
 2. **Manual placement constraint enforcement** — does manually placing an HLZ on unsuitable terrain (water, steep slope) create a blocked/warning pop up of some kind the user can see? Or is manual override the whole point of that path?
 3. **Placement finality** — is a single tap or click FINAL? Or is there a confirm/undo step? Extremely relevant, given the high cost and risk of a mis-placed HLZ in the field.
-4. **Behavior with many valid candidates** — is "first candidate found" the intended long-term behavior, or is ranking/filtering multiple valid locations on the roadmap? If so, are those ranking/filtering features hard-coded, or configurable by an admin?
+4. **Behavior with many valid candidates** — is "first candidate found" the intended long-term behavior? Or is ranking/filtering multiple valid locations on the roadmap? If so, are those ranking/filtering features hard-coded, or configurable by an admin?
 5. **Cross-platform consistency** — for an identical viewport/input, how precisely should we expect HLZ selections to match across Mac, Windows, Android, and Cloud? Is there an acceptable margin of error, in terms of distance, or should the result be identical every time?
 
 
